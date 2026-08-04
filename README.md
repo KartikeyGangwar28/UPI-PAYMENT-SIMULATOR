@@ -35,6 +35,7 @@ A modern **UPI (Unified Payments Interface) Simulator** built to demonstrate how
 ### Tools
 - Git
 - GitHub
+---
 ##DEPLOYMENT-
 VERCEL
 RENDER
