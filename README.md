@@ -36,10 +36,10 @@ A modern **UPI (Unified Payments Interface) Simulator** built to demonstrate how
 - Git
 - GitHub
 ---
-##DEPLOYMENT-
-VERCEL
-RENDER
-NEON
+### DEPLOYMENT
+-VERCEL
+-RENDER
+-NEON
 
 ---
 
