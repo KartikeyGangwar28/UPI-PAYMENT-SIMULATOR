@@ -17,7 +17,7 @@ body{
     position:relative;
 }
 
-/* Decorative Background */
+
 
 .background-shape{
     position:absolute;
@@ -42,7 +42,7 @@ body::before{
     left:-150px;
 }
 
-/* Login Card */
+
 
 .login-container{
 
@@ -214,19 +214,6 @@ button:hover{
 
     color:#bbb;
 }
-
-/* .footer{
-
-    margin-top:30px;
-
-    color:#999;
-
-    font-size:12px;
-
-    letter-spacing:.5px;
-} */
-
-/* Responsive */
 
 @media(max-width:500px){
 
