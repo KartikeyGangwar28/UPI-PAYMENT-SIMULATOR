@@ -1,0 +1,11 @@
+The reason why this error-
+To https://github.com/KartikeyGangwar28/UPI-PAYMENT-SIMULATOR
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/KartikeyGangwar28/UPI-PAYMENT-SIMULATOR'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+was there because if we push any file i.e. make a commit directly to repo without addinig it in local directory/or basically when github's branch gets a new commit that local branch doesn't have and then if we try to push local commits 
+Github moves from a to b but remote or vs code remains at a thus when we push from vs code it has to go from a to c while github goes from b to c thus push rejected so we have to fetch first;
