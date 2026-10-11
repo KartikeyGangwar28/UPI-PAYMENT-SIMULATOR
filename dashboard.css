@@ -1,0 +1,265 @@
+/* General Setup */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: lightcyan;
+    display: flex;
+    justify-content: center;
+    padding: 20px 10px;
+}
+
+.dashboard-container {
+    width: 100%;
+    max-width: 450px;
+}
+
+/* Top Navbar */
+.navbar {
+    background: #ffffff;
+    padding: 14px 18px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color:  rgb(255, 106, 0);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.user-info h4 {
+    font-size: 14px;
+    color: #1a1a1a;
+}
+
+.user-info p {
+    font-size: 12px;
+    color: #718096;
+}
+
+.logout-btn {
+    font-size: 12px;
+    color: #e53e3e;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Balance Card */
+.balance-card {
+    /* background: linear-gradient(135deg, #fbcd00, #fa8e01); */
+    background-color:  rgb(255, 106, 0);;
+    color: white;
+    padding: 20px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(74, 21, 75, 0.2);
+}
+
+.balance-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.bank-tag {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.balance-card h1 {
+    font-size: 28px;
+    margin: 12px 0 4px;
+}
+
+.account-number {
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.action-item {
+    text-align: center;
+}
+
+.icon-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border: none;
+    background: #ffffff;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    margin-bottom: 6px;
+    transition: transform 0.1s;
+}
+
+.icon-btn:active {
+    transform: scale(0.95);
+}
+
+.action-item span {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+/* Section Cards & Forms */
+.section-card {
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.section-card h3 {
+    font-size: 15px;
+    color: #2d3748;
+    margin-bottom: 14px;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 4px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-success {
+    background-color:  rgb(255, 106, 0);;
+    color: white;
+}
+
+/* Transaction List */
+.txn-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.txn-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f2f5;
+    padding-bottom: 8px;
+}
+
+.txn-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.txn-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.txn-sub {
+    font-size: 10px;
+    color: #a0aec0;
+}
+
+.txn-amount {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.debit {
+    color: #e53e3e;
+}
+
+.credit {
+    color: #38a169;
+}
+/* Hide/Show Action Sections */
+.hidden {
+    display: none !important;
+}
+
+.icon-btn.active {
+    background: #4a154b;
+    color: white;
+}
+
+/* QR Code Simulator Box */
+.qr-box {
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.qr-placeholder {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4a5568;
+    margin-bottom: 10px;
+}

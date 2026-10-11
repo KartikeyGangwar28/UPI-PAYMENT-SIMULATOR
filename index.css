@@ -1,0 +1,135 @@
+/* Base Layout & Reset */
+* {
+    box-sizing: border-box;
+    /* color:rgb(250, 250, 198); */
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(to bottom, rgb(196, 158, 7),rgb(255, 124, 2));
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+.app-container {
+    width: 100%;
+    max-width: 500px; /* Designed with a mobile-first UI perspective */
+}
+
+/* Header */
+.app-header {
+    background-color: rgb(255, 106, 0);
+    color: white;
+    padding: 16px;
+    border-radius: 12px 12px 0px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/* Cards */
+.card {
+    background: rgb(239, 237, 237);
+    padding: 24px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 12px rgba(255, 17, 17, 0.08);
+    margin-bottom: 121px;
+}
+
+h3, h4 {
+    margin-bottom: 20px;
+    color: #4d4e4e;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    /* this one is for labels or the tags for each input  */
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #ff6f00;
+}
+
+.form-group input, 
+.form-group select {
+    /* for input bars and select drag down menu */
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #363535ed;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+    border-color: rgb(255, 106, 0);
+    /* transform: rotate(23deg); */
+}
+
+.vpa-input-group {
+    display: flex;
+    align-items: center;
+}
+
+.vpa-input-group input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.vpa-input-group span {
+    background: #e9ecef;
+    border: 1px solid #ccc;
+    border-left: none;
+    padding: 10px;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    color: #f69d04;
+    font-weight: bolder;
+}
+
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    /* transition: background 0.2s; */
+}
+
+.btn-primary {
+    background-color: rgb(255, 106, 0);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color:  rgb(255, 106, 0);
+  transform: translatey(1px);
+  box-shadow: 1px 2px 10px 2px rgb(255, 106, 0);
+
+}
+
+.btn-success {
+    background-color: #00875a;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #006644;
+}
+

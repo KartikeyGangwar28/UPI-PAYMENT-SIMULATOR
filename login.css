@@ -1,0 +1,146 @@
+/* General Setup */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Brand Section */
+.brand-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.logo-icon {
+    font-size: 40px;
+    background:  rgb(255, 106, 0);;
+    color: #ffffff;
+    width: 64px;
+    height: 64px;
+    line-height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+}
+
+.brand-header h1 {
+    color:  rgb(255, 106, 0);;
+    font-size: 24px;
+}
+
+.brand-header p {
+    color: #666;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Card Styling */
+.card {
+    background: lightgoldenrodyellow;
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 18px;
+}
+
+/* Form Controls */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #4a5568;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #4a154b;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.checkbox-label {
+    color: #4a5568;
+    cursor: pointer;
+}
+
+.forgot-link {
+    color: #4a154b;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+/* Button & Links */
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color:  rgb(255, 106, 0);;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: rgb(255, 106, 0);;
+}
+
+.card-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #718096;
+}
+
+.card-footer a {
+    color:  rgb(255, 106, 0);;
+    font-weight: 600;
+    text-decoration: none;
+}
