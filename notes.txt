@@ -9,3 +9,5 @@ hint: 'git pull' before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 was there because if we push any file i.e. make a commit directly to repo without addinig it in local directory/or basically when github's branch gets a new commit that local branch doesn't have and then if we try to push local commits 
 Github moves from a to b but remote or vs code remains at a thus when we push from vs code it has to go from a to c while github goes from b to c thus push rejected so we have to fetch first;
+git stash push -m "Save notes.txt changes before syncing"
+git pull --rebase origin main
