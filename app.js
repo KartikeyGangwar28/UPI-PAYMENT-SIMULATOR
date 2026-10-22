@@ -1,3 +1,4 @@
+
 //const apiBaseUrl="http://localhost:2823";//stores URL of backend API/server;
 const apiBaseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 function getQueryParam(param){//takes a parameter that we will use to get info
@@ -17,6 +18,9 @@ if (document.getElementById("account-balance")){//null if not and in JS null/und
         setupQuickActions();
         setupRequestForm();
         setupScanSimulator();
+        setInterval(()=>{
+            fetchDashboardData();
+        },3000)
     }
     if (document.getElementById("login-form")) {
         setupLoginForm();
@@ -42,7 +46,7 @@ async function fetchDashboardData() {
         const data= await response.json(); //so returned data in json format is parsed into a js usebale value and "not necessarily a JS executable object-it does ";
         //Frontend sends the full URL as an HTTP request. Express matches the request using the HTTP method and URL path then routes it to the appropriate handler and Query parameters can be accessed using req.query while data sent in the request body can be accessed using req.body (with the appropriate middleware configured);.
         if(data.success&&response.ok){
-            renderDashboard(data.user,data.transactions);
+            renderDashboard(data.user,data.transactions,data.pendingRequests);
         }
         else{
             alert(data.message||"FAILED TO LOAD DASHBOARD DATA");
@@ -53,7 +57,7 @@ async function fetchDashboardData() {
         alert("UNABLE TO CONNCET TO SERVER AT SPECIFIED PORT");
     }
 }
-function renderDashboard(user, transactions) {
+function renderDashboard(user, transactions=[],pendingRequests=[]) {
     const nameElem = document.getElementById("user-display-name");
     const vpaElem = document.getElementById("user-display-vpa");
     const balanceElem = document.getElementById("account-balance");
@@ -63,6 +67,27 @@ function renderDashboard(user, transactions) {
     if (vpaElem) vpaElem.textContent = user.vpa;
     if (balanceElem) balanceElem.textContent = `₹ ${parseFloat(user.balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     if (bankElem) bankElem.textContent = `${user.bankName} Bank`;
+
+    const reqList=document.getElementById("pending-requests");
+    if(reqList){
+        if(!pendingRequests||pendingRequests.length===0){
+            reqList.innerHTML="";
+        }
+        else{
+            reqList.innerHTML=pendingRequests.map(req=>`
+                <div style="background: #fffaf0; border: 1px solid #feebc8; border-radius: 12px; padding: 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="display: block; font-size: 14px; color: #744210;">Payment Request</strong>
+                        <span style="font-size: 13px; color: #975a16;">${req.requesterVpa} requested ₹${parseFloat(req.amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="approveRequest('${req.id}')" style="background: #38a169; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer;">Pay</button>
+                        <button onclick="declineRequest('${req.id}')" style="background: #e53e3e; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer;">Decline</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
 
     const txnList = document.getElementById("txn-history");
     if (!txnList) return;
@@ -95,7 +120,48 @@ function renderDashboard(user, transactions) {
         `;
     }).join('');
 }
-
+async function approveRequest(requestId){
+    const upiPin=prompt("ENTER YOUR 4 DIGIT PIN TO CONFIRM THE PAYMENT: ");
+    if(!upiPin)return;
+    try{
+        const res=await fetch("/api/respond-request",{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                requestId,
+                action:'APPROVE',
+                upiPin:upiPin.trim()
+            })
+        });
+        const data=await res.json();
+       if(!data.success)alert(data.message);
+        if(data.success&&res.ok){//good industry level practice;
+            alert(data.message);
+            fetchDashboardData();
+        }
+    }
+    catch(err){
+        console.log("request approval failed: ",err);
+        alert("Server error approving request");
+    }
+}
+async function declineRequest(requestId){
+  if(!confirm("Decline this payment request"))return;
+  try{
+    const res=await fetch('/api/respond-request',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+            requestId,action:'DECLINE'
+        })
+    });
+    const data=await res.json();
+    alert(data.message);
+    if(data.success)fetchDashboardData();
+  }catch(err){
+    alert("server error in declining request");
+  }
+}
 
 // function renderTransactions(transactions = []) {
 //     const historyList = document.getElementById("txn-history") || document.getElementById("transaction-history");
@@ -256,7 +322,7 @@ function setupDashboardForms() {
     });
 }
 
-function setupQuickActions() {
+function setupQuickActions(){
     const btnSend = document.getElementById("btn-send");
     const btnRequest = document.getElementById("btn-request");
     const btnScan = document.getElementById("btn-scan");
@@ -288,17 +354,43 @@ function setupQuickActions() {
     });
 }
 
-function setupRequestForm() {
+function setupRequestForm(){
     const reqForm = document.getElementById("request-form");
     if (!reqForm) return;
 
-    reqForm.addEventListener("submit", (e) => {
+    reqForm.addEventListener("submit", async(e) => {
         e.preventDefault();
-        const reqVpa = document.getElementById("req-vpa").value.trim();
-        const reqAmount = parseFloat(document.getElementById("req-amount").value);
-
-        alert(`Payment request of ₹${reqAmount.toFixed(2)} sent to ${reqVpa}`);
-        reqForm.reset();
+       const payeeVpa=document.getElementById("req-vpa").value.trim();
+       const amount=document.getElementById("req-amount").value.trim();
+       const requesterVpa=getQueryParam("vpa");//logged in user vpa from url;
+       if(!payeeVpa||!amount){
+        alert("please enter valid payee vpa and amount");
+        return;
+       }
+       try{
+        const res=await fetch(`${apiBaseUrl}/api/request-money`,{
+            method:"POST",
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                requesterVpa,
+                payeeVpa,
+                amount
+            })
+        });
+        const data=await res.json();
+        if(data.success&&res.ok){
+            alert(data.message);
+            reqForm.reset();
+            fetchDashboardData();
+        }
+        else{
+            alert(data.message||"failed to send request");
+        }
+       }
+       catch(err){
+        console.error("request error: ",err);
+        alert("error connecting to the server please try again");
+       }
     });
 }
 

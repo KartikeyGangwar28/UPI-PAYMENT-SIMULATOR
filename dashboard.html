@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FastPay UPI - Dashboard</title>
+    <title>Artha Sanchar - Dashboard</title>
     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 
     <div class="dashboard-container">
         
-        <!-- Header / Navbar -->
         <header class="navbar">
             <div class="user-info">
                 <div class="avatar">AG</div>
@@ -22,7 +21,6 @@
             <a href="login.html" class="logout-btn">Logout</a>
         </header>
 
-        <!-- Balance Card -->
         <div class="balance-card">
             <div class="balance-header">
                 <span>Primary Account</span>
@@ -32,7 +30,6 @@
             <p class="account-number">A/C No: •••• 8912</p>
         </div>
 
-        <!-- Quick Actions Navigation -->
         <div class="quick-actions">
             <div class="action-item">
                 <button id="btn-send" class="icon-btn active">💸</button>
@@ -51,8 +48,7 @@
                 <span>Passbook</span>
             </div>
         </div>
-
-        <!-- 1. Send Money / Quick Transfer Section -->
+\
         <div id="section-send" class="section-card">
             <h3>Quick Transfer</h3>
             <form id="transfer-form">
@@ -76,7 +72,6 @@
             </form>
         </div>
 
-        <!-- 2. Request Money Section -->
         <div id="section-request" class="section-card hidden">
             <h3>Request Money</h3>
             <form id="request-form">
@@ -92,7 +87,6 @@
             </form>
         </div>
 
-        <!-- 3. Scan QR Code Section -->
         <div id="section-scan" class="section-card hidden">
             <h3>Scan QR Code</h3>
             <div class="qr-box">
@@ -100,12 +94,11 @@
                 <button type="button" id="sim-scan-btn" class="btn btn-success">Simulate Merchant QR Scan</button>
             </div>
         </div>
-
-        <!-- 4. Passbook / Recent Transactions Section -->
+     <div id="pending-requests"></div>
         <div id="section-passbook" class="section-card">
             <h3>Recent Transactions</h3>
             <div class="txn-list" id="txn-history">
-                <!-- Dynamically populated by app.js -->
+                <!--  -->
             </div>
         </div>
 

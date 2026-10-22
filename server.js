@@ -4,22 +4,11 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 
 const app = express();
-app.use(express.json());
+app.use(express.json());//middleware which converts the incoming JSON text format data into actual usable format and JS reconstructs the structure into req.body
 app.use(cors());
 app.use(express.static(path.join(__dirname),)); //static files like images,css files,stylesheets and the basic frontned local storage JS that i wrote un sab ko handle karne ke liye
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
-// // 2. Allow opening /login or /dashboard directly without typing .html
-// app.get('/login', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'login.html'));
-// });
-
-// app.get('/dashboard', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'dashboard.html'));
-// });
-
-// app.get('/register', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'index.html'));
 // });
 // In-Memory Database Simulation for testing backend logic
 const db = {
@@ -56,6 +45,9 @@ const db = {
               senderVpa: "vedl@arthasanchar", 
               payeeVpa: "adi@arthasanchar" 
             }
+    ],
+    requests:[
+
     ]
 };
 
@@ -221,8 +213,11 @@ app.get('/api/dashboard',(req,res)=>{
           return  u.id===account.userId;
         });//user was an array which served as an key inside db object and since we already checked the existence of user in db with primaryVpa so no need to check again with user that if(!user)return res.json error type code
         const userTransactions=db.transactions.filter(
-            t=> t.senderVpa===vpa || t.payeeVpa===vpa
+            t=> t.senderVpa.toLowerCase()===vpa || t.payeeVpa.toLowerCase()===vpa
         ).reverse();
+        const pendingRequests=db.requests.filter(//the request is only visible to the payee who has to pay so we filter it and search for the payee vpa in request array,when the object matches with the account and status verifies we store that in pending request and send it as a response therough json;
+            r=>r.payeeVpa.toLowerCase()===vpa && r.status==="PENDING"
+        );
         res.json({
             success:true,
             user:{
@@ -233,7 +228,8 @@ app.get('/api/dashboard',(req,res)=>{
                 balance:account.balance
             },
             // we have to filter transactions where the logged in user is either sender or reciever otherwise directlty returning db.transactions will give all the transactions of database of all users
-            transactions:userTransactions
+            transactions:userTransactions,
+            pendingRequests
         });
     }
         catch(err){
@@ -245,10 +241,7 @@ app.get('/api/dashboard',(req,res)=>{
        }
 
     });
-
-// ==========================================
-// 3. TRANSFER FUNDS ENDPOINT
-// ==========================================
+//transferring without request
 app.post('/api/transfer', async (req, res) => {
     try{
     const { senderVpa, payeeVpa, amount, upiPin } = req.body;
@@ -331,6 +324,126 @@ app.post('/api/transfer', async (req, res) => {
         })
     }
 });
+//transaction requests from another user in databse;
+app.post('/api/request-money', (req,res)=>{
+    try {
+        const { requesterVpa, payeeVpa, amount } = req.body;
+
+        if (!requesterVpa || !payeeVpa || !amount) {
+            return res.status(400).json({ success: false, message: "Fill the required details" });
+        }
+        const reqAmount = parseFloat(amount);//form se input aata hai string ke form mein basically JSON text format se as we send using JSON.stringify() so we have to convert it intoFloat to make it numerical with preserving decimals as well
+        if (isNaN(reqAmount) || reqAmount <= 0){
+            return res.status(400).json({ success: false, 
+                message: "Invalid amount" });
+        }
+        //NORMALISING PAYEE AND REQUESTER VPA TO MAKE SURE THEY DON'T GO UNDEFINED AND REQUEST DOESN'T GOES ON TO A NON EXISTING USER IN DATABASE;
+        const cleanPayee=payeeVpa.trim().toLowerCase();
+        const fullpayeeVpa=cleanPayee.includes("@")?cleanPayee:`${cleanPayee}@arthasanchar`;
+
+        const cleanRequester=requesterVpa.trim().toLowerCase();
+        const fullrequesterVpa=cleanRequester.includes("@") ? cleanRequester : `${cleanRequester}@arthasanchar`;
+        
+
+        if (fullrequesterVpa===fullpayeeVpa){
+            return res.status(400).json({ 
+                success: false, 
+                message: "Cannot request money from yourself."
+             });
+        }
+
+        if (!db.accounts[fullpayeeVpa]) {
+            return res.status(404).json({ success: false, message: "Target account not found." });
+        }
+        // const exisintingVpas=Object.keys(db.accounts).map(v=>v.toLowerCase());
+        // const payeeExists=exisintingVpas.includes(fullpayeeVpa);
+        // if(!payeeExists){
+        //     return res.status(404).json({
+        //         success:false,
+        //         message:"can't request money from an non existing user in databse"
+        //     });
+        // }
+        //    const accountKeys=Object.keys(db.accounts);
+        //    const targetAccountKey=accountKeys.find(key=>key&&key.toLowerCase()===fullpayeeVpa);
+        //    if (!targetAccountKey || !db.accounts[targetAccountKey]) {
+        //     return res.status(404).json({
+        //         success: false,
+        //         message: "Cannot request money from a non-existing user in database."
+        //     });
+        // }
+        const newRequest = {
+            id: `REQ${Date.now()}`,
+            requesterVpa:fullrequesterVpa,
+            payeeVpa:fullpayeeVpa,
+            amount: reqAmount,
+            status: "PENDING",
+            date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        db.requests.push(newRequest);//array that stores objects and requests array serves as a key;
+console.log("CURRENT PENDING REQUESTS: ",db.requests);
+        return res.json({
+            success: true,
+            message: `Request of ₹${reqAmount} sent to ${fullrequesterVpa}`
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Failed to send request." });
+    }
+});
+
+
+app.post('/api/respond-request', async (req, res) => {
+    try {
+        const { requestId, action, upiPin } = req.body;
+
+        const request = db.requests.find(r => r.id === requestId);
+        if (!request || request.status !== "PENDING") {
+            return res.status(400).json({ success: false, message: "Request not found or already processed." });
+        }
+          const normalisedAction=String(action).toUpperCase();
+        if (normalisedAction === "DECLINE") {
+            request.status = "DECLINED";
+            return res.json({ success: true, message: "Request declined." });
+        }
+
+        if (normalisedAction === "APPROVE") {
+            //ab basically fetch both the accounts then agar koi exist nhi kiya to return error else agar account match kar gaya but but pin nhi then uska error ya bhi balance check error
+            const payerAccount = db.accounts[request.payeeVpa];
+            const requesterAccount = db.accounts[request.requesterVpa];
+
+            if (!payerAccount || !requesterAccount) {
+                return res.status(404).json({ success: false, message: "Accounts mismatch." });
+            }
+
+            const isValidPin = await bcrypt.compare(upiPin.toString(), payerAccount.pinHash);
+            if (!isValidPin) {
+                return res.status(401).json({ success: false, message: "Incorrect UPI PIN." });
+            }
+
+            if (payerAccount.balance < request.amount) {
+                return res.status(400).json({ success: false, message: "Insufficient balance." });
+            }
+
+            payerAccount.balance -= request.amount;
+            requesterAccount.balance += request.amount;
+
+            db.transactions.push({
+                id: `TXN${Date.now()}`,
+                senderVpa: request.payeeVpa,
+                payeeVpa: request.requesterVpa,
+                amount: request.amount,
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                status: "SUCCESS"
+            });
+
+            request.status = "APPROVED";
+            return res.json({ success: true, message: "Payment approved and sent!" });
+        }
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Error processing request response." });
+    }
+});
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -347,7 +460,7 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-const PORT=2823;
+const PORT=2814;
 const server=app.listen(PORT,()=>{
     console.log(`Running on ${PORT}`);
 });
