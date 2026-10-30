@@ -1,30 +1,27 @@
-// db.js
+// config/db.js
 const { Pool } = require('pg');
 require('dotenv').config();
-if (!process.env.DATABASE_URL) {
-    console.error("FATAL ERROR: DATABASE_URL environment variable is missing!");
-}
-// const isProduction = process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('render.com');
+
+const connectionString = process.env.DATABASE_URL;
+
+console.log("----------------------------------------");
+console.log("DATABASE_URL DETECTED:", connectionString ? "YES (URL loaded)" : "NO (UNDEFINED!)");
+console.log("----------------------------------------");
+
 const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-    max: 20, // Max clients in pool
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionString: connectionString,
+    ssl: { rejectUnauthorized: false }
 });
 
 pool.on('connect', () => {
-    console.log(' Connected to PostgreSQL Database');
+    console.log('Successfully connected to PostgreSQL Database!');
 });
 
 pool.on('error', (err) => {
-    console.error(' Unexpected PostgreSQL client error', err);
+    console.error('PostgreSQL client error:', err);
 });
 
 module.exports = {
     query: (text, params) => pool.query(text, params),
     pool
-}; 
+};
